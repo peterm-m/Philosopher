@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedro <pedro@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pedromar <pedromar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 16:08:18 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/04 18:34:05 by pedro            ###   ########.fr       */
+/*   Updated: 2024/03/04 20:00:44 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ enum
 # define SEM_PRINT "/print"
 # define SEM_FORKS "/forks"
 # define SEM_FINISH "/finish"
+# define SEM_CHAIR "/chairs"
 
 typedef long long int	t_time;
 

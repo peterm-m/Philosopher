@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedro <pedro@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pedromar <pedromar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 21:16:43 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/04 18:39:15 by pedro            ###   ########.fr       */
+/*   Updated: 2024/03/04 20:28:13 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,11 @@ static void	philo_wait(t_local *philo, t_time wait)
 static void	philo_think(t_local *philo, t_share *sh, t_global *gl)
 {
 	printer(philo, MSG_THINK, THINK);
+	// active wait
 	sem_wait(SEM_FORKS);
 	printer(philo, MSG_TAKE_FORK, FORK);
+	// active wait
+	sem_wait(SEM_FORKS);
 	printer(philo, MSG_TAKE_FORK, FORK);
 }
 
@@ -50,7 +53,7 @@ static void	philo_eat(t_local *philo, t_share *sh, t_global *gl)
 	sem_post(SEM_FORKS);
 }
 
-void	*philosopher(t_global *global, t_share *share, int id)
+void	*philosopher(t_global *global, t_share *share, t_local *local)
 {
 	t_local	philo;
 

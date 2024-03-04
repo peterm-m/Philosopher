@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedro <pedro@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pedromar <pedromar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 17:50:42 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/04 18:35:19 by pedro            ###   ########.fr       */
+/*   Updated: 2024/03/04 20:34:10 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	printer(t_local *philo, const char *log, int action)
 	philo->time = timer();
 	printf("%lld %d %s\n", philo->time / 1000, philo->id, log);
 	if (action == DIE)
-		memset(&(philo->share->dies), 1, sizeof(char));
+		exit(EXIT_FAILURE);
 	sem_post(philo->share->screen);
 	return ;
 }
@@ -56,35 +56,31 @@ static int	parser(char const **argv, t_global *global, t_share *share)
 	share->screen = sem_open(SEM_PRINT, O_CREAT | O_EXCL, 0640, 1);
 	share->finishe = sem_open(SEM_FINISH, O_CREAT | O_EXCL, 0640, 1);
 	share->forks = sem_open(SEM_FORKS, O_CREAT | O_EXCL, 0640,
-		global->n_philo / 2);
-	if (share->screen == SEM_FAILED || share->forks == SEM_FAILED)
+			global->n_philo -1);
+	if (share->screen == SEM_FAILED || share->forks == SEM_FAILED
+			|| share->finishe == SEM_FAILED)
 		exit (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
 static int	launcher(t_global *global, t_share *share)
 {
-	pid_t	pid;
-	int		id;
+	pid_t	pid[PTHREAD_THREAD_MAX];
+	t_local	local;
 
-	id = -1;
-	while (++id < global->n_philo)
+	local.id = -1;
+	local.global = global;
+	local.share = share;
+	local.time_to_die = global->times[DIE];
+	local.time = 0;
+	while (++local.id < global->n_philo)
 	{
-		pid = fork();
-		if (pid == 0)
-			philosopher(global, share, id +1);
-		else if (pid > 0)
-			continue;
-		else
-			exit(0);
+		pid[local.id] = fork();
+		if (pid[local.id] == 0)
+			philosopher(global, share, &local);
+		else if (pid[local.id] < 0)
+			kill(-1, SIGTERM);
 	}
-	while (1)
-	{
-		waitpid(-1, NULL, 0);
-		if (errno == ECHILD)
-			break ;
-	}
-	return (EXIT_SUCCESS);
 }
 
 int	main(int argc, char const **argv)
