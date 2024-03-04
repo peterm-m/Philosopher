@@ -6,7 +6,7 @@
 /*   By: pedro <pedro@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 21:16:43 by pedromar          #+#    #+#             */
-/*   Updated: 2023/11/07 09:33:05 by pedro            ###   ########.fr       */
+/*   Updated: 2024/03/04 18:39:15 by pedro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,24 +26,13 @@ static void	philo_wait(t_local *philo, t_time wait)
 static void	philo_think(t_local *philo, t_share *sh, t_global *gl)
 {
 	printer(philo, MSG_THINK, THINK);
-	//while (sh->states[philo->fork_one] != 0 && philo->share->dies == 0)
-	//	philo_wait(philo, 10);
-	sem_wait(sh->forks);
-	//memset(&sh->states[philo->fork_one], 1, sizeof(char));
+	sem_wait(SEM_FORKS);
 	printer(philo, MSG_TAKE_FORK, FORK);
-	//while (sh->states[philo->fork_two] != 0 && philo->share->dies == 0)
-	//	philo_wait(philo, 10);
-	sem_wait(sh->forks);
-	//memset(&sh->states[philo->fork_two], 1, sizeof(char));
 	printer(philo, MSG_TAKE_FORK, FORK);
 }
 
 static void	philo_sleep(t_local *philo, t_share *sh, t_global *gl)
 {
-	sem_post(sh->forks);
-	//memset(&sh->states[philo->fork_one], 0, sizeof(char));
-	sem_post(sh->forks);
-	//memset(&sh->states[philo->fork_two], 0, sizeof(char));
 	printer(philo, MSG_SLEEP, SLEEP);
 	philo_wait(philo, gl->times[SLEEP]);
 }
@@ -58,33 +47,28 @@ static void	philo_eat(t_local *philo, t_share *sh, t_global *gl)
 	if (n_eats[philo->id -1]++ == gl->n_eats)
 		memset(&(sh->complete), sh->complete +1,
 			sizeof(int));
+	sem_post(SEM_FORKS);
 }
 
 void	*philosopher(t_global *global, t_share *share, int id)
 {
-	share->screen = sem_open(SEM_MUTEX_PRINT);
-	printf("hola id %d\n", id);
-//	t_local	*philo;
-//
-//	philo = (t_local *) arg;
-//	philo->fork_one = MIN((philo->id -1) % philo->global->n_philo,
-//			philo->id % philo->global->n_philo);
-//	philo->fork_two = MAX((philo->id -1) % philo->global->n_philo,
-//			philo->id % philo->global->n_philo);
-//	philo->time_to_die = philo->global->times[DIE];
-//	if (philo->global->n_philo == 1)
-//	{
-//		printer(philo, MSG_THINK, THINK);
-//		philo_wait(philo, philo->global->times[DIE]);
-//	}
-//	while (philo->share->start == 0)
-//		;
-//	while (philo->share->dies == 0
-//		&& philo->share->complete < philo->global->n_philo)
-//	{
-//		philo_think(philo, philo->share, philo->global);
-//		philo_eat(philo, philo->share, philo->global);
-//		philo_sleep(philo, philo->share, philo->global);
-//	}
-	exit(0);
+	t_local	philo;
+
+	philo.id = id;
+	philo.time = 0;
+	philo.time_to_die = global->times[DIE];
+	philo.global = global;
+	philo.share = share;
+	if (global->n_philo == 1)
+	{
+		printer(&philo, MSG_THINK, THINK);
+		philo_wait(&philo, global->times[DIE]);
+	}
+	while (share->dies == 0
+		&& share->complete < global->n_philo)
+	{
+		philo_think(&philo, share, global);
+		philo_eat(&philo, share, global);
+		philo_sleep(&philo, share, global);
+	}
 }

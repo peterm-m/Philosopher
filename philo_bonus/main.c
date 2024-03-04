@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main_bonus.c                                       :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pedro <pedro@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 17:50:42 by pedromar          #+#    #+#             */
-/*   Updated: 2023/11/06 22:04:08 by pedro            ###   ########.fr       */
+/*   Updated: 2024/03/04 18:35:19 by pedro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,7 @@ void	printer(t_local *philo, const char *log, int action)
 {
 	sem_wait(philo->share->screen);
 	philo->time = timer();
-	if (philo->share->dies == 0)
-		printf("%lld %d %s\n", philo->time / 1000, philo->id, log);
+	printf("%lld %d %s\n", philo->time / 1000, philo->id, log);
 	if (action == DIE)
 		memset(&(philo->share->dies), 1, sizeof(char));
 	sem_post(philo->share->screen);
@@ -45,36 +44,45 @@ static int	parser(char const **argv, t_global *global, t_share *share)
 	global->n_eats = -1;
 	if (argv[5] != 0)
 		global->n_eats = (int) get_uint(argv[5]);
-	if (global->n_philo < 1 || global->n_philo > 256
-		|| global->times[EAT] <= 0
+	if (global->n_philo < 1 || global->n_philo > PTHREAD_THREAD_MAX
+		|| global->times[DIE] <= 0
 		|| global->times[EAT] <= 0
 		|| global->times[SLEEP] <= 0
 		|| (argv[5] && global->n_eats < 0))
 		return (EXIT_FAILURE);
-	share->screen = sem_open(SEM_MUTEX_PRINT, O_CREAT, 0660, 1);
-	if (share->screen == SEM_FAILED)
-		exit (1);
+	sem_unlink(SEM_PRINT);
+	sem_unlink(SEM_FORKS);
+	sem_unlink(SEM_FINISH);
+	share->screen = sem_open(SEM_PRINT, O_CREAT | O_EXCL, 0640, 1);
+	share->finishe = sem_open(SEM_FINISH, O_CREAT | O_EXCL, 0640, 1);
+	share->forks = sem_open(SEM_FORKS, O_CREAT | O_EXCL, 0640,
+		global->n_philo / 2);
+	if (share->screen == SEM_FAILED || share->forks == SEM_FAILED)
+		exit (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
 static int	launcher(t_global *global, t_share *share)
 {
-	pid_t	p;
-	int	id;
+	pid_t	pid;
+	int		id;
 
 	id = -1;
 	while (++id < global->n_philo)
 	{
-		p = fork();
-		if (p == 0)
-		{
+		pid = fork();
+		if (pid == 0)
 			philosopher(global, share, id +1);
-			break ;
-		}
-		else if (p > 0)
+		else if (pid > 0)
 			continue;
 		else
 			exit(0);
+	}
+	while (1)
+	{
+		waitpid(-1, NULL, 0);
+		if (errno == ECHILD)
+			break ;
 	}
 	return (EXIT_SUCCESS);
 }
@@ -99,6 +107,8 @@ int	main(int argc, char const **argv)
 		printf("%s\n", "Launcher Error");
 		exit (EXIT_FAILURE);
 	}
-	else
-		exit (EXIT_SUCCESS);
+	sem_unlink(SEM_PRINT);
+	sem_unlink(SEM_FORKS);
+	sem_unlink(SEM_FINISH);
+	return (EXIT_FAILURE);
 }

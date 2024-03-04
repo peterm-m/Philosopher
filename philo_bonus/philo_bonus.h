@@ -6,7 +6,7 @@
 /*   By: pedro <pedro@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 16:08:18 by pedromar          #+#    #+#             */
-/*   Updated: 2023/11/06 21:55:30 by pedro            ###   ########.fr       */
+/*   Updated: 2024/03/04 18:34:05 by pedro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 
 # include <fcntl.h>
 # include <semaphore.h>
+# include <sys/wait.h>
+# include <errno.h>
 # include <pthread.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -44,8 +46,9 @@ enum
 
 # define PTHREAD_THREAD_MAX 256
 
-# define SEM_MUTEX_PRINT "/print"
+# define SEM_PRINT "/print"
 # define SEM_FORKS "/forks"
+# define SEM_FINISH "/finish"
 
 typedef long long int	t_time;
 
@@ -56,8 +59,6 @@ struct					s_share;
 typedef struct s_local
 {
 	int				id;
-	int				fork_one;
-	int				fork_two;
 	t_time			time;
 	t_time			time_to_die;
 	struct s_global	*global;
@@ -73,11 +74,9 @@ typedef struct s_global
 
 typedef struct s_share
 {
-	char	start;
-	char	complete;
-	char	dies;
 	sem_t	*screen;
 	sem_t	*forks;
+	sem_t	*finish;
 }	t_share;
 
 t_time	timer(void);
