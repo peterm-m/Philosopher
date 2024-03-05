@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedromar <pedromar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 21:16:43 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/04 20:28:13 by pedromar         ###   ########.fr       */
+/*   Updated: 2024/03/05 17:34:05 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,55 +23,63 @@ static void	philo_wait(t_local *philo, t_time wait)
 		philo->time_to_die -= wait;
 }
 
-static void	philo_think(t_local *philo, t_share *sh, t_global *gl)
+void	printer(t_local *philo, const char *log, int action)
 {
+	sem_wait(philo->screen);
+	philo->time = timer();
+	printf("%lld %d %s\n", philo->time / 1000, philo->id, log);
+	if (action == DIE)
+		exit(EXIT_FAILURE);
+	sem_post(philo->screen);
+	return ;
+}
+
+static void	*philo_think(void *arg)
+{
+	t_local	*philo;
+
 	printer(philo, MSG_THINK, THINK);
-	// active wait
-	sem_wait(SEM_FORKS);
-	printer(philo, MSG_TAKE_FORK, FORK);
-	// active wait
-	sem_wait(SEM_FORKS);
-	printer(philo, MSG_TAKE_FORK, FORK);
+	philo = (t_local *)arg;
+	while (philo->eating == NO_EATING)
+		philo_wait(philo, 10);
+	return (NULL);
 }
 
-static void	philo_sleep(t_local *philo, t_share *sh, t_global *gl)
+static void	philo_eat(t_local *philo, t_global *gl)
 {
-	printer(philo, MSG_SLEEP, SLEEP);
-	philo_wait(philo, gl->times[SLEEP]);
-}
-
-static void	philo_eat(t_local *philo, t_share *sh, t_global *gl)
-{
-	static int	n_eats[PTHREAD_THREAD_MAX];
-
+	sem_wait(philo->chairs);
+	sem_wait(philo->forks);
+	printer(philo, MSG_TAKE_FORK, FORK);
+	sem_wait(philo->forks);
+	memset(&philo->eating, EATING, sizeof(int));
+	printer(philo, MSG_TAKE_FORK, FORK);
 	philo->time_to_die = gl->times[DIE];
 	printer(philo, MSG_EAT, EAT);
 	philo_wait(philo, gl->times[EAT]);
-	if (n_eats[philo->id -1]++ == gl->n_eats)
-		memset(&(sh->complete), sh->complete +1,
-			sizeof(int));
-	sem_post(SEM_FORKS);
+	if (gl->n_eats-- == 0)
+		sem_post(philo->finishes);
+	memset(&philo->eating, NO_EATING, sizeof(int));
+	sem_post(philo->forks);
+	sem_post(philo->forks);
+	sem_post(philo->chairs);
 }
 
-void	*philosopher(t_global *global, t_share *share, t_local *local)
+void	philosopher(t_global *global, t_local *philo)
 {
-	t_local	philo;
+	pthread_t	think_thread;
 
-	philo.id = id;
-	philo.time = 0;
-	philo.time_to_die = global->times[DIE];
-	philo.global = global;
-	philo.share = share;
 	if (global->n_philo == 1)
 	{
-		printer(&philo, MSG_THINK, THINK);
-		philo_wait(&philo, global->times[DIE]);
+		printer(philo, MSG_THINK, THINK);
+		philo_wait(philo, global->times[DIE]);
 	}
-	while (share->dies == 0
-		&& share->complete < global->n_philo)
+	while (1)
 	{
-		philo_think(&philo, share, global);
-		philo_eat(&philo, share, global);
-		philo_sleep(&philo, share, global);
+		if (pthread_create(&think_thread, NULL, philo_think, philo))
+			exit(EXIT_FAILURE);
+		pthread_detach(think_thread);
+		philo_eat(philo, global);
+		printer(philo, MSG_SLEEP, SLEEP);
+		philo_wait(philo, global->times[SLEEP]);
 	}
 }

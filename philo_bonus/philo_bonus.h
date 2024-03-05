@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedromar <pedromar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 16:08:18 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/04 20:00:44 by pedromar         ###   ########.fr       */
+/*   Updated: 2024/03/05 17:33:34 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,26 +44,31 @@ enum
 	FORK
 };
 
+# define NO_EATING 0
+# define EATING 1
+
 # define PTHREAD_THREAD_MAX 256
 
 # define SEM_PRINT "/print"
 # define SEM_FORKS "/forks"
-# define SEM_FINISH "/finish"
-# define SEM_CHAIR "/chairs"
+# define SEM_CHAIRS "/chairs"
+# define SEM_FINISH "/finishes"
 
 typedef long long int	t_time;
 
 struct					s_local;
 struct					s_global;
-struct					s_share;
 
 typedef struct s_local
 {
 	int				id;
 	t_time			time;
 	t_time			time_to_die;
-	struct s_global	*global;
-	struct s_share	*share;
+	int				eating;
+	sem_t			*screen;
+	sem_t			*forks;
+	sem_t			*chairs;
+	sem_t			*finishes;
 }	t_local;
 
 typedef struct s_global
@@ -73,15 +78,8 @@ typedef struct s_global
 	t_time	times[3];
 }	t_global;
 
-typedef struct s_share
-{
-	sem_t	*screen;
-	sem_t	*forks;
-	sem_t	*finish;
-}	t_share;
-
 t_time	timer(void);
 void	printer(t_local *philo, const char *log, int action);
-void	*philosopher(t_global *global, t_share *share, int id);
+void	philosopher(t_global *global, t_local *philo);
 
 #endif

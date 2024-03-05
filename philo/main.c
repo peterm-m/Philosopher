@@ -6,7 +6,7 @@
 /*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 17:50:42 by pedromar          #+#    #+#             */
-/*   Updated: 2023/11/06 16:44:18 by pedromar         ###   ########.fr       */
+/*   Updated: 2024/03/05 17:35:05 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ static int	parser(char const **argv, t_global *global, t_share *share)
 		pthread_mutex_destroy(&(share->forks[i--]));
 	if (global->n_philo < 1 || global->n_philo > 256
 		|| global->times[EAT] <= 0
-		|| global->times[EAT] <= 0
+		|| global->times[DIE] <= 0
 		|| global->times[SLEEP] <= 0
 		|| (argv[5] && global->n_eats < 0) || i < 0)
 		return (EXIT_FAILURE);
