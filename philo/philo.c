@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: pedro <pedro@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 21:16:43 by pedromar          #+#    #+#             */
-/*   Updated: 2023/11/06 16:30:31 by pedromar         ###   ########.fr       */
+/*   Updated: 2024/03/05 22:48:54 by pedro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void	philo_wait(t_local *philo, t_time wait)
 		philo->time_to_die -= wait;
 }
 
-static void	philo_think(t_local *philo, t_share *sh, t_global *gl)
+static void	philo_think(t_local *philo, t_share *sh)
 {
 	printer(philo, MSG_THINK, THINK);
 	while (sh->states[philo->fork_one] != 0 && philo->share->dies == 0)
@@ -80,7 +80,7 @@ void	*philosopher(void *arg)
 	while (philo->share->dies == 0
 		&& philo->share->complete < philo->global->n_philo)
 	{
-		philo_think(philo, philo->share, philo->global);
+		philo_think(philo, philo->share);
 		philo_eat(philo, philo->share, philo->global);
 		philo_sleep(philo, philo->share, philo->global);
 	}

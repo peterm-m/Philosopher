@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: pedro <pedro@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 17:50:42 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/05 17:50:49 by pedromar         ###   ########.fr       */
+/*   Updated: 2024/03/05 23:30:19 by pedro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,10 @@ void	printer(t_local *philo, const char *log, int action)
 	if (philo->share->dies == 0)
 		printf("%lld %d %s\n", philo->time / 1000, philo->id, log);
 	if (action == DIE)
+	{
 		memset(&(philo->share->dies), 1, sizeof(char));
+		usleep(10);
+	}
 	pthread_mutex_unlock(&screen);
 	return ;
 }

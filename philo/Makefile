@@ -7,29 +7,27 @@ SRCS = \
 	philo.c\
 	tools.c\
 
-OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
-
 BUILD_DIR := .build
+
+SRCS := $(SRCS:%=$(SRC_DIR)/%)
+OBJS := $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
 CC := gcc
 CFLAG := -Wall -Wextra -Werror
 PTHREAD := -pthread
 
-LIBS = $(PTHREAD)
-
 RM := rm -rf
-MAKEFLAG += --no-print-directory
 DIR_DUP = mkdir -p $(@D)
 
 all: $(NAME)
 
-$(NAME): $(LOCKS_RULE) $(OBJS)
-	$(CC) $(CCFLAGS) $(OBJS) -o $(NAME) $(LIBS)
+$(NAME): $(OBJS)
+	$(CC) $(CFLAG) $(OBJS) -o $(NAME) $(PTHREAD)
 	$(info CREATED $(NAME))
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(DIR_DUP)
-	$(CC) $(CCFLAGS) -c $< -o $@
+	$(CC) $(CFLAG) -c $< -o $@
 	$(info CREATED $@)
 
 clean:

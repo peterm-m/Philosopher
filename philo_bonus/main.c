@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedromar <pedromar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pedro <pedro@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 17:50:42 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/05 18:52:57 by pedromar         ###   ########.fr       */
+/*   Updated: 2024/03/05 23:29:15 by pedro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ void	printer(t_local *philo, const char *log, int action)
 	philo->time = timer();
 	printf("%lld %d %s\n", philo->time / 1000, philo->id, log);
 	if (action == DIE)
+	{
+		usleep(10);
 		exit(EXIT_FAILURE);
+	}
 	sem_post(philo->screen);
 	return ;
 }
@@ -57,13 +60,13 @@ static void	*wait_end(void *arg)
 	t_local	*philo;
 
 	philo = arg;
-	while (philo->id-- > 0)
+	while (--philo->id > 0)
 		sem_wait(philo->finishes);
 	sem_unlink(SEM_PRINT);
 	sem_unlink(SEM_FORKS);
 	sem_unlink(SEM_CHAIRS);
 	sem_unlink(SEM_FINISH);
-	kill(0, SIGTERM);
+	kill(0, SIGINT);
 	exit (EXIT_SUCCESS);
 	return (NULL);
 }
@@ -73,21 +76,23 @@ static int	launcher(t_global *global, t_local *philo)
 	pid_t		pid;
 	pthread_t	thread_finish;
 
-	philo->id = -1;
+	philo->id = 0;
 	philo->eating = 0;
 	philo->time_to_die = global->times[DIE];
-	while (++philo->id < global->n_philo)
+	sem_wait(philo->screen);
+	while (philo->id++ < global->n_philo)
 	{
 		pid = fork();
 		if (pid == 0)
 		{
-			philo->time = timer();
 			sem_wait(philo->finishes);
 			philosopher(global, philo);
 		}
 		else if (pid < 0)
 			return (EXIT_FAILURE);
 	}
+	usleep(10);
+	sem_post(philo->screen);
 	if (pthread_create(&thread_finish, NULL, wait_end, philo))
 		exit(EXIT_FAILURE);
 	pthread_detach(thread_finish);
@@ -116,6 +121,6 @@ int	main(int argc, char const **argv)
 	sem_unlink(SEM_FORKS);
 	sem_unlink(SEM_CHAIRS);
 	sem_unlink(SEM_FINISH);
-	kill(0, SIGTERM);
+	kill(0, SIGINT);
 	exit (EXIT_SUCCESS);
 }

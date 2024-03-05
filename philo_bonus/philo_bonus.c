@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: pedro <pedro@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 21:16:43 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/05 18:05:02 by pedromar         ###   ########.fr       */
+/*   Updated: 2024/03/05 23:19:50 by pedro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ static void	*philo_think(void *arg)
 {
 	t_local	*philo;
 
-	printer(philo, MSG_THINK, THINK);
 	philo = (t_local *)arg;
+	printer(philo, MSG_THINK, THINK);
 	while (philo->eating == NO_EATING)
 		philo_wait(philo, 10);
 	return (NULL);
@@ -47,9 +47,9 @@ static void	philo_eat(t_local *philo, t_global *gl)
 	philo_wait(philo, gl->times[EAT]);
 	if (gl->n_eats-- == 0)
 		sem_post(philo->finishes);
+	sem_post(philo->forks);
+	sem_post(philo->forks);
 	memset(&philo->eating, NO_EATING, sizeof(int));
-	sem_post(philo->forks);
-	sem_post(philo->forks);
 	sem_post(philo->chairs);
 }
 
@@ -57,6 +57,9 @@ void	philosopher(t_global *global, t_local *philo)
 {
 	pthread_t	think_thread;
 
+	sem_wait(philo->screen);
+	sem_post(philo->screen);
+	philo->time = timer();
 	if (global->n_philo == 1)
 	{
 		printer(philo, MSG_THINK, THINK);
