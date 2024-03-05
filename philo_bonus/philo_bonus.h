@@ -6,7 +6,7 @@
 /*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 16:08:18 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/05 17:33:34 by pedromar         ###   ########.fr       */
+/*   Updated: 2024/03/05 17:49:27 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define PHILO_BONUS_H
 
 # include <sys/types.h>
-# include <sys/time.h>
 # include <sys/param.h>
 
 # include <fcntl.h>
@@ -47,14 +46,10 @@ enum
 # define NO_EATING 0
 # define EATING 1
 
-# define PTHREAD_THREAD_MAX 256
-
 # define SEM_PRINT "/print"
 # define SEM_FORKS "/forks"
 # define SEM_CHAIRS "/chairs"
 # define SEM_FINISH "/finishes"
-
-typedef long long int	t_time;
 
 struct					s_local;
 struct					s_global;
@@ -78,7 +73,6 @@ typedef struct s_global
 	t_time	times[3];
 }	t_global;
 
-t_time	timer(void);
 void	printer(t_local *philo, const char *log, int action);
 void	philosopher(t_global *global, t_local *philo);
 

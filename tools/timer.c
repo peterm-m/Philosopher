@@ -1,28 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tools.h                                            :+:      :+:    :+:   */
+/*   timer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/31 16:08:18 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/05 17:49:03 by pedromar         ###   ########.fr       */
+/*   Created: 2024/03/05 17:43:58 by pedromar          #+#    #+#             */
+/*   Updated: 2024/03/05 17:45:59 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TOOLS_H
-# define TOOLS_H
+#include "tools.h"
 
-# include <limits.h>
-# include <sys/time.h>
-# include <stdlib.h>
+t_time	timer(void)
+{
+	static struct timeval	time0 = {.tv_sec = 0, .tv_usec = 0};
+	struct timeval			time;
 
-# define PTHREAD_THREAD_MAX 256
-
-typedef long long int	t_time;
-
-t_time			timer(void);
-long long int	get_uint(const char *str);
-
-
-#endif
+	if (time0.tv_sec == 0 && time0.tv_usec == 0)
+		gettimeofday(&time0, NULL);
+	gettimeofday(&time, NULL);
+	return ((time.tv_sec - time0.tv_sec) * 1000000
+		+ (time.tv_usec - time0.tv_usec));
+}

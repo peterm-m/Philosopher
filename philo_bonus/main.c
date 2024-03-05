@@ -6,22 +6,21 @@
 /*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 17:50:42 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/05 17:34:37 by pedromar         ###   ########.fr       */
+/*   Updated: 2024/03/05 17:54:33 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-t_time	timer(void)
+void	printer(t_local *philo, const char *log, int action)
 {
-	static struct timeval	time0 = {.tv_sec = 0, .tv_usec = 0};
-	struct timeval			time;
-
-	if (time0.tv_sec == 0 && time0.tv_usec == 0)
-		gettimeofday(&time0, NULL);
-	gettimeofday(&time, NULL);
-	return ((time.tv_sec - time0.tv_sec) * 1000000
-		+ (time.tv_usec - time0.tv_usec));
+	sem_wait(philo->screen);
+	philo->time = timer();
+	printf("%lld %d %s\n", philo->time / 1000, philo->id, log);
+	if (action == DIE)
+		exit(EXIT_FAILURE);
+	sem_post(philo->screen);
+	return ;
 }
 
 static int	parser(char const **argv, t_global *gl, t_local *ph)

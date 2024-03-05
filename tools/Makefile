@@ -5,6 +5,7 @@ SRC_DIR := .
 
 SRCS = \
 	get_number.c\
+	timer.c\
 
 SRCS := $(SRCS:%=$(SRC_DIR)/%)
 

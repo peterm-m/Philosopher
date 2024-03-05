@@ -6,7 +6,7 @@
 /*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 21:16:43 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/05 17:34:05 by pedromar         ###   ########.fr       */
+/*   Updated: 2024/03/05 17:52:42 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,6 @@ static void	philo_wait(t_local *philo, t_time wait)
 		printer(philo, MSG_DIE, DIE);
 	else
 		philo->time_to_die -= wait;
-}
-
-void	printer(t_local *philo, const char *log, int action)
-{
-	sem_wait(philo->screen);
-	philo->time = timer();
-	printf("%lld %d %s\n", philo->time / 1000, philo->id, log);
-	if (action == DIE)
-		exit(EXIT_FAILURE);
-	sem_post(philo->screen);
-	return ;
 }
 
 static void	*philo_think(void *arg)
