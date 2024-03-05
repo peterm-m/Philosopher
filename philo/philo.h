@@ -6,15 +6,12 @@
 /*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 16:08:18 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/05 17:49:29 by pedromar         ###   ########.fr       */
+/*   Updated: 2024/03/05 18:02:26 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
-
-# include <sys/types.h>
-# include <sys/param.h>
 
 # include <pthread.h>
 # include <stdio.h>
@@ -30,14 +27,14 @@
 # define MSG_TAKE_FORK "has taken fork"
 # define MSG_DIE "died"
 
-enum
+typedef enum e_state
 {
 	DIE,
 	SLEEP,
 	EAT,
 	THINK,
 	FORK
-};
+}	t_state;
 
 struct					s_local;
 struct					s_global;
