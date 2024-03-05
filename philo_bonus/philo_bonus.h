@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: pedromar <pedromar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 16:08:18 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/05 18:02:17 by pedromar         ###   ########.fr       */
+/*   Updated: 2024/03/05 18:52:23 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 
 # include "tools.h"
 
+# include <signal.h>
 # include <fcntl.h>
 # include <semaphore.h>
 # include <sys/wait.h>

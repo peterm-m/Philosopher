@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tools.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: pedromar <pedromar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 16:08:18 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/05 18:00:38 by pedromar         ###   ########.fr       */
+/*   Updated: 2024/03/05 18:47:22 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,5 @@ typedef long long int	t_time;
 
 t_time			timer(void);
 long long int	get_uint(const char *str);
-
 
 #endif

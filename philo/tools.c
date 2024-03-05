@@ -3,14 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   get_number.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: pedromar <pedromar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 17:24:33 by pedro             #+#    #+#             */
-/*   Updated: 2023/11/06 16:55:26 by pedromar         ###   ########.fr       */
+/*   Updated: 2024/03/05 18:47:02 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tools.h"
+
+t_time	timer(void)
+{
+	static struct timeval	time0 = {.tv_sec = 0, .tv_usec = 0};
+	struct timeval			time;
+
+	if (time0.tv_sec == 0 && time0.tv_usec == 0)
+		gettimeofday(&time0, NULL);
+	gettimeofday(&time, NULL);
+	return ((time.tv_sec - time0.tv_sec) * 1000000
+		+ (time.tv_usec - time0.tv_usec));
+}
 
 static long long int	ft_atol(const char *str)
 {
