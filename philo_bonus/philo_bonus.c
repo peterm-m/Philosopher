@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedro <pedro@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 21:16:43 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/05 23:19:50 by pedro            ###   ########.fr       */
+/*   Updated: 2024/03/06 11:32:40 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static void	philo_eat(t_local *philo, t_global *gl)
 	philo->time_to_die = gl->times[DIE];
 	printer(philo, MSG_EAT, EAT);
 	philo_wait(philo, gl->times[EAT]);
-	if (gl->n_eats-- == 0)
+	if (--gl->n_eats == 0)
 		sem_post(philo->finishes);
 	sem_post(philo->forks);
 	sem_post(philo->forks);

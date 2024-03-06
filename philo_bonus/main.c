@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pedro <pedro@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pedromar <pedromar@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 17:50:42 by pedromar          #+#    #+#             */
-/*   Updated: 2024/03/05 23:29:15 by pedro            ###   ########.fr       */
+/*   Updated: 2024/03/06 11:33:42 by pedromar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ static void	*wait_end(void *arg)
 	philo = arg;
 	while (--philo->id > 0)
 		sem_wait(philo->finishes);
+	sem_wait(philo->screen);
 	sem_unlink(SEM_PRINT);
 	sem_unlink(SEM_FORKS);
 	sem_unlink(SEM_CHAIRS);
@@ -123,4 +124,5 @@ int	main(int argc, char const **argv)
 	sem_unlink(SEM_FINISH);
 	kill(0, SIGINT);
 	exit (EXIT_SUCCESS);
+	return (EXIT_SUCCESS);
 }
