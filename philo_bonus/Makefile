@@ -1,4 +1,4 @@
-NAME = philo_bonus
+NAME = philo
 
 SRC_DIR := .
 
@@ -23,12 +23,10 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(CC) $(CFLAG) $(OBJS) -o $(NAME) $(PTHREAD)
-	$(info CREATED $(NAME))
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
-	$(DIR_DUP)
+	@$(DIR_DUP)
 	$(CC) $(CFLAG) -c $< -o $@
-	$(info CREATED $@)
 
 clean:
 	$(RM) $(BUILD_DIR)
